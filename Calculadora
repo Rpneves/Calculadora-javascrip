@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Teste</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        body {
+            height: 20000px
+        }
+
+        h1 {
+            color: #333;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        @font-face {
+            font-family: digital-7;
+            src: url("css/digital-7.ttf")
+        }
+
+        .wrapper {
+            padding: 0%;
+        }
+
+        .wrap {
+            margin: 50px;
+            border: 1px solid #333;
+            background: #d0d0e1;
+            padding: 10px 10px 10px 10px;
+            background-color: #eee;
+            width: 530px;
+            border-radius: 20px;
+            box-shadow: 5px 5px 15px 5px #000000
+        }
+
+        .display {
+            position: relative;
+            width: inherit;
+            background: #c2d6d6;
+            border: 1px solid #777;
+            height: 100px;
+            padding: 10px;
+            margin: 10px;
+            max-width: 490px;
+            height: 80px;
+            border-radius: 10px;
+            box-shadow: inset 2px 2px 8px 1px rgba(0, 0, 0, 0.73);
+        }
+
+        .display-tall {
+            color: #333;
+            font-family: digital-7;
+            font-size: 80px;
+            float: right;
+        }
+
+        .display-short {
+            color: #333;
+            font-family: digital-7;
+            font-size: 20px;
+        }
+
+        .wrapper-teclas {
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .tecla {
+            width: 110px;
+            height: 50px;
+            color: darkslategrey;
+            padding: 8px 40px 10px 40px;
+            margin: 5px;
+            font-size: 30px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            box-shadow: 1px 1px 3px 1px #000000
+        }
+
+        .tecla-soft {
+            width: 110px;
+            height: 50px;
+            color: #555;
+            background: #bbb;
+            padding: 8px 40px 10px 40px;
+            margin: 5px;
+            font-size: 30px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            box-shadow: 1px 1px 3px 1px #000000
+        }
+
+        .tecla-dark {
+            width: 110px;
+            height: 50px;
+            color: #ccc;
+            background: #777;
+            padding: 8px 40px 10px 40px;
+            margin: 5px;
+            font-size: 30px;
+            border: 1px solid #555;
+            border-radius: 6px;
+            box-shadow: 1px 1px 3px 1px #000000
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app" tabindex="0" @keydown="pressionaTecla">
+        <h1>{{ title }}</h1>
+        <div class="wrapper">
+            <div class="wrap">
+                <div class="display">
+                    <span class="display-short">{{ operacao }}</span>
+                    <span class="display-tall">{{ valor }}</span>
+                </div>
+
+                <div class="wrapper-teclas">
+                    <button @click="zerar()" @keyup.esc="zerar()" class="tecla-dark ">C</button><button
+                        class="tecla-soft">...</button><button class="tecla-soft">...</button><button @click="divide()"
+                        class="tecla-dark">/</button><br>
+
+                    <button @click="adicionaNumero($event)" @keyup.55="adicionaNumero($event)"
+                        class="tecla">7</button><button @click="adicionaNumero($event)"
+                        @keyup.56="adicionaNumero($event)" class="tecla">8</button><button
+                        @click="adicionaNumero($event)" @keyup.47="adicionaNumero($event)"
+                        class="tecla">9</button><button @click="multiplica()" class="tecla-dark">x</button><br />
+
+                    <button @click="adicionaNumero($event)" @keyup.52="adicionaNumero($event)"
+                        class="tecla">4</button><button @click="adicionaNumero($event)"
+                        @keyup.53="adicionaNumero($event)" class="tecla">5</button><button
+                        @click="adicionaNumero($event)" @keyup.54="adicionaNumero($event)"
+                        class="tecla">6</button><button @click="subtrair()" class="tecla-dark">-</button><br />
+
+
+                    <button @click="adicionaNumero($event)" @keyup.49="adicionaNumero($event)"
+                        class="tecla">1</button><button @click="adicionaNumero($event)"
+                        @keyup.50="adicionaNumero($event)" class="tecla">2</button><button
+                        @click="adicionaNumero($event)" @keyup.51="adicionaNumero($event)"
+                        class="tecla">3</button><button @click="somar()" class="tecla-dark">+</button><br />
+
+
+                    <button class="tecla-soft">...</button><button @click="adicionaNumero($event)"
+                        @keyup.48="adicionaNumero($event)" class="tecla">0</button><button
+                        @click="adicionaNumero($event)" class="tecla-soft">,</button><button @click="igual()"
+                        @keyup.enter="igual()" class="tecla-dark">=</button><br />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                title: 'Exercício treino Vue: Calculadora',
+                valor: 0,
+                memoria: 0,
+                resultado: 0,
+                reset: false,
+                acao: 0,
+                operacao: ''
+            },
+            methods: {
+                pressionaTecla(event) {
+                    console.log(event.keyCode)
+                },
+                adicionaNumero(event) {
+                    if (this.reset === true) {
+                        this.valor = 0
+                        this.reset = false
+                    }
+                    if (this.valor == 0) {
+                        this.valor = ''
+                    }
+                    data = event.target.innerHTML
+                    this.valor += data.replace(',', '.')
+                },
+                zerar() {
+                    this.valor = 0
+                    this.memoria = 0
+                    this.resultado = 0
+                    this.reset = true
+                    this.operacao = ''
+                },
+                somar() {
+                    if (this.memoria > 0) {
+                        this.ultimaAcao()
+                        this.memoria = 0
+                        this.acao = 0
+                        this.operacao = ''
+                    }
+                    this.memoria = parseFloat(this.valor)
+                    this.reset = true
+                    this.acao = 1
+                    this.operacao = '[SOMA]'
+                },
+                subtrair() {
+                    if (this.memoria > 0) {
+                        this.ultimaAcao()
+                        this.memoria = 0
+                        this.acao = 0
+                        this.operacao = ''
+                    }
+                    this.memoria = parseFloat(this.valor)
+                    this.reset = true
+                    this.acao = 2
+                    this.operacao = '[SUBTRAI]'
+                },
+                multiplica() {
+                    if (this.memoria > 0) {
+                        this.ultimaAcao()
+                        this.memoria = 0
+                        this.acao = 0
+                        this.operacao = ''
+                    }
+                    this.memoria = parseFloat(this.valor)
+                    this.reset = true
+                    this.acao = 3
+                    this.operacao = '[MULTIPLICA]'
+                },
+                divide() {
+                    if (this.memoria > 0) {
+                        this.ultimaAcao()
+                        this.memoria = 0
+                        this.acao = 0
+                        this.operacao = ''
+                    }
+                    this.memoria = parseFloat(this.valor)
+                    this.reset = true
+                    this.acao = 4
+                    this.operacao = '[DIVIDE]'
+                },
+                igual() {
+                    if (this.memoria > 0) {
+                        this.ultimaAcao()
+                        this.memoria = 0
+                        this.acao = 0
+                        this.operacao = ''
+                        this.reset = true
+                    }
+                },
+                ultimaAcao() {
+                    let valor1 = this.memoria
+                    let valor2 = parseFloat(this.valor)
+                    switch (this.acao) {
+                        case 1:
+                            this.valor = valor1 + valor2
+                            break
+                        case 2:
+                            this.valor = valor1 - valor2
+                            break
+                        case 3:
+                            this.valor = valor1 * valor2
+                            break
+                        case 4:
+                            this.valor = valor1 / valor2
+                            break
+                    }
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
